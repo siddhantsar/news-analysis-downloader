@@ -11,7 +11,7 @@ This script lets you download the daily news analysis PDF(s) either in bunch or 
 
 Everyday, the website is updated at evening. So, to download the latest file, you may want to wait till it appears online. 
 
-Old PDF(s) can be downloading in bunch by following onscreen instructions.
+Old PDF(s) can be downloaded in bunch by following onscreen instructions.
 '''
 
 
