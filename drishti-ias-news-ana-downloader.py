@@ -1,19 +1,30 @@
 import os
 import datetime
-import requests
-from bs4 import BeautifulSoup as bs
+import requests  # To make HTTPS Requests
+from bs4 import BeautifulSoup as bs  # To parse HTML, XML, LXML files
 from pathlib import Path
+
+'''
+Drishti IAS News Analysis PDF Downloader
+
+This script lets you download the daily news analysis PDF(s) either in bunch or single file.
+
+Everyday, the website is updated at evening. So, to download the latest file, you may want to wait till it appears online. 
+
+Old PDF(s) can be downloading in bunch by following onscreen instructions.
+'''
 
 
 def fetchingWebpage(url):
     try:
-        local_webpage = requests.get(base_url)
+        local_webpage = requests.get(base_url)  # Storing the webpage locally
         return local_webpage
     except Exception as e:
         print('Cannot fetch the webpage...')
         print(e)
 
 
+# Creating the required directories to store the files systematically
 def createDirectories(cwd):
     folder_name = 'drishti-ias-crnt-aff'
     folder_path = Path(cwd + '/' + folder_name)
@@ -26,11 +37,12 @@ def createDirectories(cwd):
 
 
 def creatingSoup(webpage):
+    # Parsing the locally saved webapge with BS4
     local_soup = bs(webpage.text, features='html.parser')
     return local_soup
 
 
-def fetchingPdf(date, soup):
+def fetchingPdf(date, soup):  # Searching and finding the required links for the file
     pdf_link = soup.select('.btn-group a')
     if len(pdf_link) != 0:
         pdf_link = pdf_link[2]['href']
@@ -40,7 +52,7 @@ def fetchingPdf(date, soup):
         return None
 
 
-def creatingFile(date, cwd):
+def creatingFile(date, cwd):  # Creating and returning Binary File to save the data
     file_name = date + '.pdf'
     file_path = Path(cwd + '/' + 'drishti-ias-crnt-aff' +
                      '/' + file_name)
@@ -53,6 +65,7 @@ def creatingFile(date, cwd):
         return None
 
 
+# Downloading the file and writing it in local Binary File
 def downloadingFile(file, pdf_url):
     pdf_raw = requests.get(pdf_url)
     if pdf_raw.status_code != 200:
@@ -78,9 +91,11 @@ if __name__ == '__main__':
 
     if download_option.lower() == 't':
         end_date = start_date + 1*day_delta
+
     elif download_option.lower() == 'p':
         end_date = start_date + \
             int(input('Enter the number of days: '))*day_delta
+
     else:
         print('Try again...')
 
@@ -88,7 +103,8 @@ if __name__ == '__main__':
 
     for i in range((end_date - start_date).days):
         date = start_date - i*day_delta
-        date = date.strftime('%d-%m-%Y')  # Correcting the format
+        # Correcting the format to match the URL
+        date = date.strftime('%d-%m-%Y')
         base_url = 'https://www.drishtiias.com/current-affairs-news-analysis-editorials/news-analysis/' + date
 
         webpage = fetchingWebpage(base_url)
